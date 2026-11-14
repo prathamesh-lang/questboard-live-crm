@@ -1,50 +1,114 @@
-# Questboard — live customer intelligence CRM
+# QUESTBOARD — Customer Success Intelligence CRM
 
-A Next.js app for the Questathon two-account CRM task. It keeps the MCP token server-side, ingests account and paperwork snapshots once, polls `get_signals` at a controlled cadence, and writes notes back with `write_note`.
+**Customer Operations for Autonomous Drone Deployments**
+*Questathon Competition MVP — 14 November 2026*
 
-## Security
+> **DISCLAIMER:** QUESTBOARD is an independent competition prototype built for the Questathon Hackathon. It is **NOT** an official FlytBase product and must not imply official endorsement by FlytBase.
 
-- Never put the MCP token in browser code or any `NEXT_PUBLIC_*` variable.
-- Never commit `.env.local`.
-- Set `AQ_TOKEN` only in the local server environment and the hosting provider's server environment variables.
-- The app does not expose a token field in the UI.
+---
 
-## Setup
+## 1. Product Overview
+
+QUESTBOARD is an evidence-driven Customer Success operating system designed for an enterprise Customer Success Manager (CSM) taking over complex autonomous drone dock accounts.
+
+When opening QUESTBOARD on Monday morning, an executive CSM instantly understands:
+- **What the account book is worth:** Verified booked annual recurring revenue (ARR) cleanly isolated from open pipeline, conditional unaccepted offers, and unverified customer claims.
+- **Who actually holds decision-making power:** Operational champions separated from true purchasing authorities and regulatory blockers.
+- **What to do first:** Deterministically ranked next actions with verified owners, actual deadlines, and evidence sources.
+- **What is about to go wrong:** Predictive risk radar tracking stakeholder exits, unanswered event tickets, DPIA stalls, and silent telemetry drop-offs.
+- **What you still do not know:** Honest, explicit unknowns detailing what information is missing, why it matters, who can answer, and the affected deal.
+
+---
+
+## 2. The Two Enterprise Accounts
+
+### Account A: Eastern Counties Police Alliance
+- **Operational Reality:** 4 member forces (Westmere, Metro Central, Tarn Valley, Norwold). Only Westmere and Metro Central fly live missions. Tarn Valley has 0 live missions (DPIA blocked). Norwold only trains.
+- **Booked ARR:** **£350,000 / year** (GBP) — Signed contract on file (`contract_a`), all 4 invoices paid.
+- **Key Champions & Blockers:** Rhys Calder (Programme Lead, Ally — *Leaving in January 2027*); Fatima Osei (Tarn Valley DPO — *DPIA blocked 4 months waiting on FlytBase data-flow pack*); Insp. Karen Mbeki (Westmere Drone Unit — *Urgent event 5 Dec, unanswered ticket FB-11206*).
+- **Financial Rule:** Decentralized budgets. Each force CFO must individually approve call-offs.
+
+### Account B: Aldermoor Industrial Group
+- **Operational Reality:** 15 plants (14 docks installed, 13 flying). Only 4 plants fly regularly; 9 plants only log test flights. Plant 15 has no dock.
+- **Booked ARR:** **€140,000 / year** (EUR) — Signed contract on file (`contract_b`).
+- **Key Stakeholders & Risks:** Stefan Roy (Head of Group Security, Sponsor); Stefan's Deputy (*Undocumented rollout know-how; leaving shortly*); Owen Fitch (Head of Group IT — *Zero ongoing IT maintenance ownership*); Beatriz Alonso (Plant 7 Manager — *Night alert friction*).
+- **Financial Rule:** Stefan's €1.2M annual savings claim is strictly theoretical guard hours replaced; Finance has booked €0 in savings.
+
+---
+
+## 3. Key Features
+
+1. **Executive Command Centre:** Unified overview of both enterprise accounts, isolating currencies (£ GBP, € EUR, $ USD) with zero artificial blending.
+2. **Deterministic Five-Question Intelligence:** Dedicated deep-dive panels for all five core customer-success questions per account.
+3. **Interactive Evidence & Provenance Drawer:** Every numerical statement, action deadline, and risk links to an inspectable source ID with verbatim excerpts, document dates, and provenance classifications (`DIRECT`, `DERIVED`, `UNVERIFIED`).
+4. **Live Signal Monitoring:** JSON-RPC integration with MCP tool `get_signals`, respecting a strict 65-second rate limit, deduplicating signals by unique ID, and providing cooldown countdown timers.
+5. **Two-Way Action Write-Back:** Server-side write-back using `write_note` with pre-flight JSON-RPC payload preview, character counters, and explicit confirmation.
+6. **Honest Unknowns Engine:** Explicitly highlights missing information and unanswered questions rather than fabricating false health scores.
+
+---
+
+## 4. Technology Stack
+
+- **Framework:** Next.js 15.5.6 (App Router)
+- **Library:** React 19.1.1
+- **Language:** TypeScript 5.8
+- **Runtime:** Node.js 18+
+- **Styling:** Custom Enterprise Dark CSS (`app/globals.css`)
+- **Protocol:** Questathon MCP JSON-RPC over HTTP (`lib/mcp.ts`)
+- **Dependencies:** Zero external bloat (built on core Next.js & React)
+
+---
+
+## 5. Security & Confidentiality
+
+The `AQ_TOKEN` is confidential and strictly protected:
+- **Server-Side Only:** `process.env.AQ_TOKEN` is used exclusively within Node.js API routes and scripts.
+- **Zero Client Exposure:** Never exposed in browser JavaScript, `NEXT_PUBLIC_*` variables, or client bundle.
+- **Git Protection:** `.env.local` and raw local `data/` directories are git-ignored.
+- **Production Fallback:** `lib/snapshot.ts` safely falls back to sanitized curated records if `data/` is excluded on cloud deployments.
+
+---
+
+## 6. Local Setup & Execution
 
 ```bash
+# 1. Clone repository
+git clone https://github.com/prathamesh-lang/questboard-live-crm.git
+cd questboard-live-crm
+
+# 2. Configure environment
 cp .env.example .env.local
-# Edit .env.local and set AQ_TOKEN=your_token (do not commit this file)
+# Edit .env.local and set AQ_TOKEN=<your_token> (never commit this file)
+
+# 3. Install dependencies
 npm install
-npm run ingest
+
+# 4. Ingest data (already completed in production snapshot)
+# npm run ingest
+
+# 5. Run development server
 npm run dev
 ```
 
-`npm run ingest` makes five MCP calls in sequence, waiting 61 seconds between calls to respect the one-call-per-minute token limit:
+Open [http://localhost:3000](http://localhost:3000) to view the application.
 
-1. `get_my_accounts`
-2. `get_all_paperwork` for account `A`
-3. `get_all_paperwork` for account `B`
-4. `get_signals`
-5. `get_data_format`
+---
 
-It writes the results under `data/`. Inspect the returned shape before writing any account-specific conclusions. The generated files are safe to commit only after checking that they contain no token or private credentials.
-
-## Run
+## 7. Testing & Verification
 
 ```bash
-npm run dev
+# Typecheck
+npx --package=typescript tsc --noEmit
+
+# Production Build
+npm run build
 ```
 
-Open http://localhost:3000.
+---
 
-## Live connection
+## 8. Deployment
 
-The server route `/api/signals` calls `get_signals`; the UI checks at approximately 65-second intervals. `/api/write-note` calls `write_note`. All calls are server-side and share a simple in-process 60.5-second cooldown. On a multi-instance serverless host, use a shared rate limiter before enabling simultaneous users.
-
-## Deployment
-
-Deploy as a Next.js application to Vercel or another Node-compatible host. Add `AQ_TOKEN` as a server-only environment variable in the hosting dashboard. Do not place it in source files, build logs, or the browser. Commit the fetched JSON snapshots in `data/` so judges can read the account facts immediately; keep `.env.local` ignored.
-
-## Important product limitation
-
-The initial UI is an ingestion and evidence-inspection scaffold. It does **not** claim to have completed the five account answers until the MCP snapshots have been inspected and mapped. In particular, never display a monetary or usage figure without its actual source ID. Do not infer a deal value from a champion's unverified claim.
+To deploy to Vercel or any Node.js hosting platform:
+1. Connect the GitHub repository `prathamesh-lang/questboard-live-crm`.
+2. Add `AQ_TOKEN` in the hosting environment variables settings.
+3. Deploy. The application's multi-tier snapshot engine will serve curated evidence records seamlessly without requiring private customer files in git.

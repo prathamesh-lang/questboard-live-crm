@@ -1,0 +1,1 @@
+No access token is included in this project. The user must configure AQ_TOKEN locally and on the hosting provider as a server-only secret. Do not commit .env.local.

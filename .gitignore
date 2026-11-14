@@ -13,8 +13,11 @@ npm-debug.log*
 .env.*
 !.env.example
 .env.local
-data/
+/data/
 
 # Dependencies and build output
 node_modules/
 .next/
+*.tsbuildinfo
+
+.vercel

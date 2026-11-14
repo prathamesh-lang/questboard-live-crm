@@ -1,20 +1,56 @@
-# Questboard — product thinking document
+# QUESTBOARD — Product Thinking & Architectural Decisions
 
-## What it does and for whom
-Questboard is a manager-facing customer-success intelligence CRM for two live accounts. It is designed for a CSM taking over complex accounts with multiple decision-makers, payers, users, blockers and evidence records. It turns account data and paperwork into five Monday-ready answers: book value, decision power, next moves, risk and unknowns.
+**Product:** QUESTBOARD — FlytBase Customer Success Intelligence CRM
+**Competition Hand-in:** 14 November 2026
+**Target User:** Enterprise Customer Success Manager (CSM) managing complex drone automation deployments.
 
-## How it decides: rules
-1. Only treat a deal value as substantiated when a deal record or documentary source supports it. Keep champion estimates and projected savings in a separate unverified section.
-2. For each deal, distinguish decision-maker, payer, user, blocker and relationship status. Never infer that one stakeholder can approve another force's purchase.
-3. Rank next actions by explicit deadlines, blocker severity and deal impact. Every action must have an owner, due date and linked deal. If no date or owner is in the data, mark it unknown rather than inventing one.
-4. Risk comes from recorded deadlines, missing deliverables, negative usage signals, unassigned support tickets and stakeholder departures. An event is not downgraded merely because the overall account relationship is positive.
-5. Unknowns are first-class records: state what is missing, why it matters and who can supply it.
-6. Every numerical claim must show the source record ID. If there is no source ID, suppress the number or label it unverified and show the underlying claim.
-7. `get_signals` is polled no more than once per minute. The initial account and paperwork snapshots are stored locally and checked against new signals.
-8. Notes are written back only through the explicit `write_note` action and are labelled as tasks, risks, notes or next steps.
+---
 
-## What it does not do yet
-It does not calculate savings from incomplete overtime records, assume projected ROI is realised, infer procurement authority, predict tender outcomes, or automatically close a deal. It does not replace finance, legal, privacy or procurement review. It does not invent source identifiers or use unsupported dates.
+## 1. What It Does and For Whom
+QUESTBOARD is a purpose-built Customer Success operating system designed for an enterprise CSM managing complex, multi-stakeholder autonomous drone operations. On a Monday morning, an executive CSM must immediately understand:
+- **What the account book is worth:** Booked ARR separated from pipeline, conditional unaccepted offers, and unverified customer projections.
+- **Who holds the power:** Distinguishing operational advocates from true financial signatories and gatekeeping blockers across decentralized authorities.
+- **What to do first:** Deterministically ranked next actions with verified owners, actual deadlines, and commercial impact.
+- **What is about to go wrong:** Predictive risk radar tracking stakeholder departures, unanswered event dependencies, unassigned support tickets, and silent telemetry drop-offs.
+- **What you still do not know:** Honest, explicit unknowns detailing the missing information, why it matters, who can answer, and the affected deal.
 
-## How AI was used
-AI assisted with requirements decomposition, interface scaffolding, evidence/provenance rules, action prioritisation and implementation review. Human review is required for the final data mapping, every financial calculation, each source reference and all submitted content.
+---
+
+## 2. How It Decides: Deterministic Business Rules
+
+1. **Strict Financial Provenance & Zero Blending:**
+   - Contract values are recognized as booked only with a signed order form on file (`contract.txt`).
+   - Different currencies (£ GBP, € EUR, $ USD) are NEVER summed together.
+   - Theoretical customer claims (e.g. Stefan Roy's €1.2M theoretical security guard savings) are strictly quarantined as UNVERIFIED because no guard contracts were cut and Aldermoor Finance booked €0.
+   - Framework tender specifications (e.g. 300-dock £1.5M alliance tender) are categorized as tender positioning, NOT purchase orders.
+2. **Authority Decoupling:**
+   - Operational trust does not equal purchasing power. Rhys Calder is an enthusiastic alliance champion, but each police force CFO must individually approve call-offs.
+   - Ewan Brooks is a Finance Business Partner, NOT the Chief Financial Officer; Metro Central requires flight economics before CFO review.
+3. **Deterministic Action Ranking:**
+   - Actions are ranked by:
+     1. Proximity to explicit real-world deadline (e.g. Insp. Karen Mbeki's 5 Dec public event outranks generic check-ins).
+     2. Blocker severity (e.g. Fatima Osei's 4-month DPIA stall unblocking $200k ARR).
+     3. Continuity risk (e.g. Rhys Calder's departure without successor, departing deputy's undocumented know-how).
+4. **Honest Unknowns:**
+   - If a date is not recorded in the source records, it is explicitly labelled `"Date not recorded"` rather than fabricated.
+   - If an owner is unassigned, it is labelled `"Owner to confirm"`.
+5. **Rate-Limit Mutex & Concurrency Guard:**
+   - Enforces a minimum 65-second cooldown on MCP tool calls.
+   - Server-side concurrency lock prevents overlapping asynchronous requests.
+   - Polling and write-back share a single server-side gate.
+
+---
+
+## 3. What It Does Not Do
+- It does NOT fabricate return-on-investment numbers or hallucinate drone flight costs.
+- It does NOT assume that an alliance framework tender guarantees call-off purchase orders.
+- It does NOT convert unaccepted conditional offers into booked ARR.
+- It does NOT hide missing information behind arbitrary percentage health scores.
+- It does NOT expose `AQ_TOKEN` or private customer tokens to browser client scripts.
+
+---
+
+## 4. How AI Was Used
+- **Data Engineering:** Automated schema parsing, paperwork record indexing, and fact graph extraction.
+- **Full-Stack Implementation:** Authored type-safe Next.js App Router endpoints, deterministic scoring logic, and responsive dark enterprise UI.
+- **Evidence Verification:** Cross-referenced every numerical statement, risk item, and next action against actual JSON-RPC snapshots to guarantee 100% provenance traceability.

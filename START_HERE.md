@@ -1,11 +1,45 @@
-# START HERE — do these steps in order
+# START HERE — QUESTBOARD Execution Guide
 
-1. In the Questathon Build → Connect tab, click **Show my token**. Do not paste the token into chat, Antigravity prompts, source files, or GitHub.
-2. Extract this project into a folder, open it in Antigravity, and create `.env.local` by copying `.env.example`.
-3. Put the token only in `.env.local` as `AQ_TOKEN=...`. The file is git-ignored.
-4. Ask Antigravity to read `ANTIGRAVITY_PROMPT.md` and implement the five evidence-backed account answers using the real MCP response shapes.
-5. In the terminal run `npm install`, then `npm run ingest`. The script waits 61 seconds between each of five MCP calls. Do not start other MCP calls at the same time.
-6. After ingestion, inspect the `data/` files. They contain the account snapshot and source paperwork, not the token. Upload the JSON files here if you want help mapping the real IDs and facts.
-7. Run `npm run dev` and verify the app locally.
-8. For hosting, configure `AQ_TOKEN` only in the host's server-side environment settings. Commit no `.env.local` and no token.
-9. Complete the hosted link, public repository, Google Doc thinking page, and 3-minute Google Drive walkthrough in the event's Hand in tab. Verify every link in a private window.
+**Competition Deadline:** 3:47 PM IST, 14 November 2026
+**Product:** QUESTBOARD — FlytBase Customer Success Intelligence CRM
+**Status:** MVP Fully Implemented & Tested
+
+---
+
+## Quick Navigation
+
+1. **Local Development:**
+   ```bash
+   npm run dev
+   ```
+   Open [http://localhost:3000](http://localhost:3000) to access the Monday-ready executive dashboard.
+
+2. **Run Production Build:**
+   ```bash
+   npm run build
+   ```
+
+3. **Verify Type Safety:**
+   ```bash
+   npx --package=typescript tsc --noEmit
+   ```
+
+4. **Public Deployment:**
+   - Deploy directly to Vercel via GitHub integration.
+   - Configure server-only environment variable: `AQ_TOKEN=<your_token>`.
+   - Never commit `.env.local` or upload tokens to browser/public logs.
+
+---
+
+## Key Modules & Files
+
+- `components/dashboard.tsx`: Executive 8-view customer-success interface.
+- `components/evidence-drawer.tsx`: Interactive slide-over provenance and audit inspector.
+- `lib/data/curated-data.ts`: Evidence-backed dataset covering all 5 questions for both accounts.
+- `lib/types.ts`: Strongly typed data models for deals, stakeholders, actions, risks, and unknowns.
+- `lib/rate-limit.ts`: Strict 65-second cooldown and concurrency mutex for MCP JSON-RPC.
+- `app/api/signals/route.ts`: Live signal poller with deduplication and stale error handling.
+- `app/api/write-note/route.ts`: Validated note/task/risk write-back to Questathon MCP.
+- `ARCHITECTURE.md`: Complete system diagrams, data flow, and deployment specs.
+- `docs/data-map.md`: Traceable mapping of all deals, stakeholders, and source records.
+- `docs/thinking-doc.md`: Answers to product philosophy, decision rules, and AI usage.
